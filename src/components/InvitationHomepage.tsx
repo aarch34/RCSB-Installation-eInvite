@@ -1,0 +1,563 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { motion, Variants, useScroll, useSpring } from "framer-motion";
+
+interface InvitationHomepageProps {
+  scrollContainerRef: React.RefObject<HTMLDivElement | null>;
+}
+
+interface DecorativeProps {
+  type: "sparkle" | "circle" | "flourish" | "constellation" | "confetti" | "star";
+  color: "yellow" | "blue" | "red";
+  className?: string;
+  mouseOffset: { x: number; y: number };
+  parallaxFactor: number;
+  floatYRange: number[];
+  floatDuration: number;
+  floatDelay?: number;
+}
+
+// Reusable animated rigging for subtle floating decorative flourishes
+function DecorativeElement({
+  type,
+  color,
+  className = "",
+  mouseOffset,
+  parallaxFactor,
+  floatYRange,
+  floatDuration,
+  floatDelay = 0,
+}: DecorativeProps) {
+  const colorClass = 
+    color === "yellow" ? "text-transparent-yellow" :
+    color === "blue" ? "text-cerulean-blue" : "text-[#4D0E12]";
+
+  const renderSVG = () => {
+    switch (type) {
+      case "sparkle":
+        return (
+          <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full">
+            <path d="M12 2L15 7L22 12L15 17L12 22L9 17L2 12L9 7Z" />
+          </svg>
+        );
+      case "star":
+        return (
+          <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full">
+            <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />
+          </svg>
+        );
+      case "circle":
+        return (
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-full h-full">
+            <circle cx="12" cy="12" r="8" />
+          </svg>
+        );
+      case "flourish":
+        return (
+          <svg viewBox="0 0 100 30" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" className="w-full h-full">
+            <path d="M5 22 C 30 2, 70 2, 95 22" />
+            <circle cx="50" cy="8" r="1.3" fill="currentColor" />
+          </svg>
+        );
+      case "constellation":
+        return (
+          <svg viewBox="0 0 40 40" fill="currentColor" stroke="currentColor" strokeWidth="0.4" strokeDasharray="1 1.5" className="w-full h-full">
+            <circle cx="8" cy="8" r="1.2" />
+            <circle cx="32" cy="12" r="0.9" />
+            <circle cx="20" cy="28" r="1.1" />
+            <line x1="8" y1="8" x2="32" y2="12" className="opacity-30" />
+            <line x1="32" y1="12" x2="20" y2="28" className="opacity-30" />
+          </svg>
+        );
+      case "confetti":
+        return (
+          <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full">
+            <polygon points="6,2 18,5 15,22 3,19" />
+          </svg>
+        );
+    }
+  };
+
+  return (
+    <motion.div
+      style={{
+        x: mouseOffset.x * parallaxFactor,
+        y: mouseOffset.y * parallaxFactor,
+      }}
+      className={`absolute pointer-events-none z-10 ${className} ${colorClass}`}
+    >
+      <motion.div
+        animate={{
+          y: floatYRange,
+          rotate: type === "flourish" || type === "constellation" ? [0, 3, -3, 0] : [0, 360],
+          opacity: [0.06, 0.15, 0.06],
+        }}
+        transition={{
+          duration: floatDuration,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: floatDelay,
+        }}
+        className="w-full h-full"
+      >
+        {renderSVG()}
+      </motion.div>
+    </motion.div>
+  );
+}
+
+export default function InvitationHomepage({ scrollContainerRef }: InvitationHomepageProps) {
+  const [activeSections, setActiveSections] = useState<Record<string, boolean>>({});
+  const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
+
+  const setSectionActive = (sectionId: string) => {
+    setActiveSections((prev) => {
+      if (prev[sectionId]) return prev;
+      return { ...prev, [sectionId]: true };
+    });
+  };
+
+  // Handle cursor moves for micro parallax response
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      // Scale coordinates from -4px to +4px offset
+      const x = (e.clientX / window.innerWidth - 0.5) * 8;
+      const y = (e.clientY / window.innerHeight - 0.5) * 8;
+      setMouseOffset({ x, y });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  const { scrollYProgress } = useScroll({
+    container: scrollContainerRef,
+  });
+
+  const scaleY = useSpring(scrollYProgress, {
+    stiffness: 90,
+    damping: 25,
+    restDelta: 0.001,
+  });
+
+  const containerVariants: Variants = {
+    initial: {},
+    animate: {
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.1,
+      },
+    },
+  };
+
+  const fadeUpVariants: Variants = {
+    initial: { opacity: 0, y: 30 },
+    animate: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.95,
+        ease: [0.16, 1, 0.3, 1], // easeOutExpo
+      },
+    },
+  };
+
+  const cardHoverVariants: Variants = {
+    hover: {
+      y: -6,
+      borderColor: "rgba(245, 239, 200, 0.3)",
+      boxShadow: "0 12px 40px rgba(0, 0, 0, 0.45), 0 0 15px rgba(165, 188, 214, 0.1)",
+      transition: { duration: 0.3, ease: "easeOut" },
+    },
+  };
+
+  const markerVariants: Variants = {
+    inactive: {
+      borderColor: "rgba(165, 188, 214, 0.45)",
+      backgroundColor: "#231815",
+      boxShadow: "none",
+      scale: 1,
+    },
+    active: {
+      borderColor: "#F5EFC8",
+      backgroundColor: "#F5EFC8",
+      boxShadow: "0 0 10px rgba(245, 239, 200, 0.55)",
+      scale: 1.15,
+      transition: { duration: 0.45, ease: "easeOut" },
+    },
+  };
+
+  const details = [
+    { label: "Date", value: "Sunday, 12th July", icon: "📅" },
+    { label: "Time", value: "6:00 PM onwards", icon: "🕕" },
+    { label: "Venue", value: "Rotary House of Friendship", icon: "📍" },
+    { label: "Dress Code", value: "Formals", icon: "👔" },
+  ];
+
+  return (
+    <motion.div
+      variants={containerVariants}
+      initial="initial"
+      animate="animate"
+      className="relative z-30 max-w-[950px] w-full mx-auto px-6 py-16 md:py-24 text-white"
+    >
+      {/* Title Header */}
+      <motion.div variants={fadeUpVariants} className="relative space-y-4 md:space-y-6 mb-16 md:mb-20 text-center">
+        
+        {/* Floating Sparks on Header Corners */}
+        <DecorativeElement
+          type="sparkle"
+          color="yellow"
+          className="w-4 h-4 left-[5%] top-[-20px]"
+          mouseOffset={mouseOffset}
+          parallaxFactor={1.3}
+          floatYRange={[0, -15, 0]}
+          floatDuration={11}
+        />
+        <DecorativeElement
+          type="circle"
+          color="blue"
+          className="w-5 h-5 right-[8%] top-[-10px]"
+          mouseOffset={mouseOffset}
+          parallaxFactor={0.8}
+          floatYRange={[0, 12, 0]}
+          floatDuration={14}
+          floatDelay={1.5}
+        />
+
+        <h1 className="text-5xl sm:text-6xl md:text-7xl font-serif italic text-transparent-yellow drop-shadow-[0_0_25px_rgba(245,239,200,0.14)] font-normal tracking-wide">
+          UGAMA AARAMBHA
+        </h1>
+        <p className="text-xs sm:text-sm font-sans uppercase tracking-[0.22em] text-[#A5BCD6]/80 mt-4 max-w-[700px] mx-auto font-light leading-relaxed">
+          Joint Installation Ceremony of <br />
+          <span className="text-[#F5EFC8] font-normal">Rotaract Club of Swarna Bengaluru</span> <br />
+          <span className="text-white/50 lowercase px-2 font-light">and</span> <br />
+          <span className="text-[#F5EFC8] font-normal">Rotaract Club of Nava Chaitanya</span>
+        </p>
+        <p className="text-[10px] sm:text-xs font-sans uppercase tracking-[0.25em] text-[#A5BCD6]/50 mt-3 font-light">
+          13th Installation Ceremony • 2025-26
+        </p>
+        <div className="w-24 h-[1px] bg-gradient-to-r from-transparent via-[#F5EFC8]/40 to-transparent mx-auto mt-6" />
+        <p className="text-base sm:text-lg md:text-xl font-sans font-light max-w-[700px] mx-auto text-[#A5BCD6]/85 leading-relaxed">
+          Join us as we celebrate leadership, service, and the beginning of a new chapter.
+        </p>
+      </motion.div>
+
+      {/* Visual Journey Line & Content Wrapper */}
+      <div className="relative pl-10 sm:pl-16 mt-16 md:mt-24 space-y-24">
+        
+        {/* Inactive line track */}
+        <div className="absolute left-2 sm:left-6 top-[12px] bottom-[90px] w-[1px] bg-cerulean-blue/15 pointer-events-none" />
+
+        {/* Active line overlay */}
+        <motion.div
+          className="absolute left-2 sm:left-6 top-[12px] bottom-[90px] w-[1.5px] bg-[#F5EFC8]/75 origin-top pointer-events-none"
+          style={{ scaleY }}
+        />
+
+        {/* SECTION 1: Event Details */}
+        <div className="relative space-y-8">
+          
+          {/* Sparkle Decoration next to Header */}
+          <DecorativeElement
+            type="sparkle"
+            color="yellow"
+            className="w-4 h-4 right-[12%] top-[-25px]"
+            mouseOffset={mouseOffset}
+            parallaxFactor={1.2}
+            floatYRange={[0, -14, 0]}
+            floatDuration={12}
+          />
+          <DecorativeElement
+            type="circle"
+            color="blue"
+            className="w-4.5 h-4.5 left-[40%] top-[-30px]"
+            mouseOffset={mouseOffset}
+            parallaxFactor={0.7}
+            floatYRange={[0, 10, 0]}
+            floatDuration={15}
+            floatDelay={2}
+          />
+
+          {/* Circular Marker */}
+          <motion.div
+            variants={markerVariants}
+            animate={activeSections["details"] ? "active" : "inactive"}
+            className="absolute -translate-x-1/2 -left-8 sm:-left-10 top-[10px] w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 z-20 pointer-events-none"
+          />
+          <motion.div
+            onViewportEnter={() => setSectionActive("details")}
+            viewport={{ once: true, amount: 0.15 }}
+            className="absolute top-0"
+          />
+          
+          <h2 className="text-xl sm:text-2xl font-light font-sans tracking-widest text-[#A5BCD6]/90 border-b border-[#F5EFC8]/10 pb-3 uppercase flex items-center justify-between">
+            <span>Event Details</span>
+            <span className="w-10 h-[1px] bg-[#F5EFC8]/10" />
+          </h2>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {details.map((detail, idx) => (
+              <motion.div
+                key={idx}
+                variants={cardHoverVariants}
+                whileHover="hover"
+                className="relative overflow-hidden rounded-2xl border border-[#F5EFC8]/12 bg-[#4D0E12]/5 backdrop-blur-md p-6 flex flex-col items-start space-y-4 cursor-default shadow-lg"
+              >
+                <div className="absolute inset-0 bg-gradient-to-b from-[#A5BCD6]/5 to-transparent pointer-events-none" />
+                <span className="text-3xl filter drop-shadow-[0_0_8px_rgba(165,188,214,0.3)] select-none">
+                  {detail.icon}
+                </span>
+                <div className="space-y-1">
+                  <h3 className="text-xs uppercase tracking-[0.2em] font-sans font-light text-[#A5BCD6]/70">
+                    {detail.label}
+                  </h3>
+                  <p className="text-base font-sans font-light text-[#F5EFC8]">
+                    {detail.value}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* SECTION 2: Special Guests */}
+        <div className="relative space-y-8">
+          
+          {/* Flourish lines next to Special Guests Header */}
+          <DecorativeElement
+            type="flourish"
+            color="blue"
+            className="w-20 h-6 right-[6%] top-[-8px]"
+            mouseOffset={mouseOffset}
+            parallaxFactor={0.6}
+            floatYRange={[0, -6, 0]}
+            floatDuration={16}
+          />
+          <DecorativeElement
+            type="star"
+            color="yellow"
+            className="w-3.5 h-3.5 left-[15%] top-[-35px]"
+            mouseOffset={mouseOffset}
+            parallaxFactor={1.5}
+            floatYRange={[0, 12, 0]}
+            floatDuration={10}
+            floatDelay={0.5}
+          />
+
+          {/* Circular Marker */}
+          <motion.div
+            variants={markerVariants}
+            animate={activeSections["guests"] ? "active" : "inactive"}
+            className="absolute -translate-x-1/2 -left-8 sm:-left-10 top-[10px] w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 z-20 pointer-events-none"
+          />
+          <motion.div
+            onViewportEnter={() => setSectionActive("guests")}
+            viewport={{ once: true, amount: 0.15 }}
+            className="absolute top-0"
+          />
+
+          <h2 className="text-xl sm:text-2xl font-light font-sans tracking-widest text-[#A5BCD6]/90 border-b border-[#F5EFC8]/10 pb-3 uppercase flex items-center justify-between">
+            <span>Special Guests</span>
+            <span className="w-10 h-[1px] bg-[#F5EFC8]/10" />
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Guest 1 */}
+            <div className="rounded-2xl border border-[#F5EFC8]/10 bg-[#231815]/40 backdrop-blur-sm p-6 space-y-2">
+              <h3 className="text-xs font-sans uppercase tracking-widest text-[#A5BCD6]/60">
+                President of Rotary Club of Bangalore
+              </h3>
+              <p className="text-lg font-serif italic text-transparent-yellow font-medium">
+                RTN Vineetha Chinappa
+              </p>
+            </div>
+
+            {/* Guest 2 */}
+            <div className="rounded-2xl border border-[#F5EFC8]/10 bg-[#231815]/40 backdrop-blur-sm p-6 space-y-2">
+              <h3 className="text-xs font-sans uppercase tracking-widest text-[#A5BCD6]/60">
+                Guest of Honor
+              </h3>
+              <p className="text-lg font-serif italic text-transparent-yellow font-medium">
+                RTN Anju Agadi
+              </p>
+              <p className="text-xs font-sans font-light tracking-wider text-[#A5BCD6]/80 leading-relaxed">
+                Youth Service Director <br /> Rotary Club of Bangalore
+              </p>
+            </div>
+          </div>
+
+          {/* Induction detail */}
+          <div className="rounded-2xl border border-[#F5EFC8]/10 bg-[#4D0E12]/10 backdrop-blur-sm p-6 sm:p-8 text-center space-y-3">
+            <h3 className="text-xs font-sans uppercase tracking-[0.25em] text-[#A5BCD6]/60">
+              Induction Ceremony
+            </h3>
+            <p className="text-sm font-sans font-light text-white/95 max-w-[550px] mx-auto leading-relaxed text-center">
+              New members will be inducted by <br className="hidden sm:inline" />
+              District Rotaract Representative 3192
+            </p>
+            <p className="text-lg font-serif italic text-cerulean-blue font-medium mt-2 text-center">
+              PHF RTR.RTN Sanjay R.
+            </p>
+          </div>
+        </div>
+
+        {/* SECTION 3: Leadership */}
+        <div className="relative space-y-8">
+          
+          {/* Constellation decoration next to Leadership Header */}
+          <DecorativeElement
+            type="constellation"
+            color="blue"
+            className="w-9 h-9 right-[18%] top-[-35px]"
+            mouseOffset={mouseOffset}
+            parallaxFactor={0.9}
+            floatYRange={[0, 10, 0]}
+            floatDuration={18}
+          />
+          <DecorativeElement
+            type="sparkle"
+            color="yellow"
+            className="w-3 h-3 left-[22%] top-[-30px]"
+            mouseOffset={mouseOffset}
+            parallaxFactor={1.4}
+            floatYRange={[0, -11, 0]}
+            floatDuration={13}
+            floatDelay={2.2}
+          />
+
+          {/* Circular Marker */}
+          <motion.div
+            variants={markerVariants}
+            animate={activeSections["leadership"] ? "active" : "inactive"}
+            className="absolute -translate-x-1/2 -left-8 sm:-left-10 top-[10px] w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 z-20 pointer-events-none"
+          />
+          <motion.div
+            onViewportEnter={() => setSectionActive("leadership")}
+            viewport={{ once: true, amount: 0.15 }}
+            className="absolute top-0"
+          />
+
+          <h2 className="text-xl sm:text-2xl font-light font-sans tracking-widest text-[#A5BCD6]/90 border-b border-[#F5EFC8]/10 pb-3 uppercase flex items-center justify-between">
+            <span>Leadership</span>
+            <span className="w-10 h-[1px] bg-[#F5EFC8]/10" />
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {/* Incoming */}
+            <div className="rounded-2xl border border-[#F5EFC8]/10 bg-[#231815]/40 backdrop-blur-sm p-6 space-y-2">
+              <h3 className="text-xs font-sans uppercase tracking-widest text-[#A5BCD6]/60">
+                Incoming President
+              </h3>
+              <p className="text-xl font-serif italic text-transparent-yellow font-semibold">
+                RTR Vigneswaran
+              </p>
+            </div>
+
+            {/* Outgoing */}
+            <div className="rounded-2xl border border-[#F5EFC8]/10 bg-[#231815]/40 backdrop-blur-sm p-6 space-y-2">
+              <h3 className="text-xs font-sans uppercase tracking-widest text-[#A5BCD6]/60">
+                Outgoing President
+              </h3>
+              <p className="text-xl font-serif italic text-white/80">
+                RTR Dr. Harish
+              </p>
+            </div>
+          </div>
+
+          {/* Board of Directors */}
+          <div className="rounded-2xl border border-[#F5EFC8]/10 bg-[#231815]/40 backdrop-blur-sm p-6 sm:p-8 space-y-4">
+            <h3 className="text-xs font-sans uppercase tracking-widest text-center text-[#A5BCD6]/60">
+              Board of Directors
+            </h3>
+            <div className="w-12 h-[1px] bg-[#F5EFC8]/20 mx-auto" />
+            <div className="text-center">
+              <p className="text-lg font-serif italic text-cerulean-blue font-medium">
+                RTR Ganesh Prabhu
+              </p>
+              <p className="text-xs font-sans uppercase tracking-widest text-[#A5BCD6]/70 mt-1">
+                Secretary
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* SECTION 4: RSVP */}
+        <div className="relative space-y-8 pb-12">
+          
+          {/* Sparkles next to RSVP Header */}
+          <DecorativeElement
+            type="circle"
+            color="yellow"
+            className="w-4 h-4 right-[10%] top-[-20px]"
+            mouseOffset={mouseOffset}
+            parallaxFactor={0.75}
+            floatYRange={[0, 15, 0]}
+            floatDuration={14}
+            floatDelay={1}
+          />
+          <DecorativeElement
+            type="confetti"
+            color="blue"
+            className="w-3.5 h-3.5 left-[30%] top-[-25px]"
+            mouseOffset={mouseOffset}
+            parallaxFactor={1.3}
+            floatYRange={[0, -13, 0]}
+            floatDuration={11}
+            floatDelay={0.7}
+          />
+
+          {/* Circular Marker */}
+          <motion.div
+            variants={markerVariants}
+            animate={activeSections["rsvp"] ? "active" : "inactive"}
+            className="absolute -translate-x-1/2 -left-8 sm:-left-10 top-[10px] w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 z-20 pointer-events-none"
+          />
+          <motion.div
+            onViewportEnter={() => setSectionActive("rsvp")}
+            viewport={{ once: true, amount: 0.15 }}
+            className="absolute top-0"
+          />
+
+          <h2 className="text-xl sm:text-2xl font-light font-sans tracking-widest text-[#A5BCD6]/90 border-b border-[#F5EFC8]/10 pb-3 uppercase flex items-center justify-between">
+            <span>RSVP</span>
+            <span className="w-10 h-[1px] bg-[#F5EFC8]/10" />
+          </h2>
+
+          <div className="rounded-2xl border border-[#F5EFC8]/10 bg-[#231815]/40 backdrop-blur-sm p-6 sm:p-8 text-center space-y-4">
+            <p className="text-sm font-sans font-light tracking-wide text-white/80">
+              For queries and confirmations, please contact:
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-[600px] mx-auto pt-2">
+              <div>
+                <p className="text-base font-serif italic text-transparent-yellow font-medium">
+                  RTR Ganesh Prabhu
+                </p>
+                <p className="text-[10px] uppercase tracking-wider text-[#A5BCD6]/70 mt-1 font-sans">
+                  Secretary • +91 97426 31254
+                </p>
+              </div>
+              <div>
+                <p className="text-base font-serif italic text-transparent-yellow font-medium">
+                  RTR Vigneswaran
+                </p>
+                <p className="text-[10px] uppercase tracking-wider text-[#A5BCD6]/70 mt-1 font-sans">
+                  Incoming President • +91 80956 71203
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      {/* Footer watermark */}
+      <div className="pt-16 pb-8 text-center">
+        <p className="text-[10px] sm:text-xs font-sans tracking-[0.3em] uppercase text-[#A5BCD6]/35 font-light">
+          Rotaract Club of Swarna Bengaluru • District 3192
+        </p>
+      </div>
+    </motion.div>
+  );
+}

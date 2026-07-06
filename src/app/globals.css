@@ -1,0 +1,136 @@
+@import "tailwindcss";
+
+@theme {
+  --color-java-brown: #231815;
+  --color-potting-soil: #4A2E27;
+  --color-sceptre-red: #4D0E12;
+  --color-cerulean-blue: #A5BCD6;
+  --color-transparent-yellow: #F5EFC8;
+  
+  --font-serif: var(--font-playfair);
+  --font-sans: var(--font-inter);
+}
+
+:root {
+  --background: #231815; /* Java Brown */
+  --foreground: #F5EFC8; /* Transparent Yellow for elegant body text highlights */
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), sans-serif;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+/* Premium film grain style noise texture (animated for analog feel) */
+@keyframes grain-movement {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-0.5%, -0.8%); }
+  20% { transform: translate(-1%, 0.5%); }
+  30% { transform: translate(0.5%, -1.2%); }
+  40% { transform: translate(-0.5%, 1.5%); }
+  50% { transform: translate(-1.2%, 0.8%); }
+  60% { transform: translate(0.8%, 1.2%); }
+  70% { transform: translate(1.5%, -0.8%); }
+  80% { transform: translate(-1%, 0.5%); }
+  90% { transform: translate(0.5%, -1.5%); }
+}
+
+.noise-overlay {
+  position: fixed;
+  top: -10%;
+  left: -10%;
+  right: -10%;
+  bottom: -10%;
+  width: 120%;
+  height: 120%;
+  content: "";
+  opacity: 0.055;
+  pointer-events: none;
+  z-index: 50;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 250 250' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  animation: grain-movement 8s steps(10) infinite;
+}
+
+/* Base custom radial background structure for high quality depth */
+.premium-radial-bg {
+  background: 
+    radial-gradient(circle at 50% 40%, rgba(74, 46, 39, 0.6) 0%, transparent 60%), /* Potting Soil center glow */
+    radial-gradient(circle at 15% 20%, rgba(77, 14, 18, 0.25) 0%, transparent 50%), /* Sceptre Red top-left depth */
+    radial-gradient(circle at 85% 80%, rgba(77, 14, 18, 0.2) 0%, transparent 50%), /* Sceptre Red bottom-right depth */
+    #231815; /* Base Java Brown */
+}
+
+/* Smooth ambient animate gradient properties */
+@keyframes slow-drift-blue {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(40px, -60px) scale(1.1);
+  }
+  66% {
+    transform: translate(-30px, 30px) scale(0.9);
+  }
+}
+
+@keyframes slow-drift-yellow {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  40% {
+    transform: translate(-50px, 40px) scale(0.95);
+  }
+  80% {
+    transform: translate(30px, -50px) scale(1.15);
+  }
+}
+
+.drift-glow-blue {
+  animation: slow-drift-blue 25s infinite ease-in-out;
+}
+
+.drift-glow-yellow {
+  animation: slow-drift-yellow 30s infinite ease-in-out;
+}
+
+/* Button hover shimmer highlight effect */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 1.8s infinite;
+}
+
+/* Button click ripple animation */
+@keyframes ripple-pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(3.5);
+    opacity: 0;
+  }
+}
+
+.button-ripple {
+  position: absolute;
+  background-color: rgba(245, 239, 200, 0.45);
+  border-radius: 50%;
+  pointer-events: none;
+  width: 100px;
+  height: 100px;
+  animation: ripple-pulse 0.85s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+
