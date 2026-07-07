@@ -135,7 +135,24 @@ export const META = {
   description:
     "A New Chapter Begins. Join us as we celebrate the joint installation of Swarna Bengaluru and Bengaluru Nava Chaitanya presidents & office bearers.",
   url: "https://invite.rcsb.org", // update to your actual domain
-  ogImage: "/og-image.jpg",       // place a 1200×630 image in /public
+  ogImage: "/poster.jpg",          // fall back to the event poster in /public
+  keywords: [
+    "UGAMA AARAMBHA 2K26",
+    "Joint Installation Ceremony",
+    "Rotaract Club of Swarna Bengaluru",
+    "Rotaract Club of Bengaluru Nava Chaitanya",
+    "Rotary District 3192",
+    "Rotaract District 3192",
+    "Rotary House of Friendship",
+    "RHF Bangalore",
+    "RCSB",
+    "Swarna Bengaluru",
+    "Nava Chaitanya",
+    "eInvite",
+    "RSVP Swarna Bengaluru",
+    "Rotary Club of Bangalore",
+    "Bengaluru Rotaract Installation"
+  ],
 } as const;
 
 // ─── Email ────────────────────────────────────────────────────────────────────
