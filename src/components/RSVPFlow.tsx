@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import QRCode from "qrcode";
 import { EVENT, RSVP_CONTACTS } from "@/lib/constants";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -13,12 +14,14 @@ interface FormData {
   clubName: string;
   designation: string;
   email: string;
+  consentGiven: boolean;
 }
 
 interface ConfirmationData {
   fullName: string;
   clubName: string;
   designation: string;
+  email?: string;
   reference: string;
 }
 
@@ -57,10 +60,36 @@ export default function RSVPFlow() {
     clubName: "",
     designation: "",
     email: "",
+    consentGiven: false,
   });
-  const [errors, setErrors] = useState<Partial<FormData>>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
   const [submitError, setSubmitError] = useState<string>("");
   const [confirmation, setConfirmation] = useState<ConfirmationData | null>(null);
+  const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
+
+  // QR Code generator effect
+  useEffect(() => {
+    if (confirmation && confirmation.reference) {
+      QRCode.toDataURL(
+        confirmation.reference,
+        {
+          margin: 1,
+          width: 250,
+          color: {
+            dark: "#000000",
+            light: "#ffffff",
+          },
+        },
+        (err, url) => {
+          if (!err) {
+            setQrCodeUrl(url);
+          } else {
+            console.error("Failed to generate QR code", err);
+          }
+        }
+      );
+    }
+  }, [confirmation]);
 
   // ── Step 1: Accept / Decline ────────────────────────────────────────────────
 
@@ -80,12 +109,15 @@ export default function RSVPFlow() {
   // ── Step 2: Validate ─────────────────────────────────────────────────────────
 
   const validate = (): boolean => {
-    const e: Partial<FormData> = {};
+    const e: Partial<Record<keyof FormData, string>> = {};
     if (!form.fullName.trim()) e.fullName = "required";
     if (!form.clubName.trim()) e.clubName = "required";
     if (form.email.trim()) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(form.email.trim())) e.email = "invalid";
+    }
+    if (!form.consentGiven) {
+      e.consentGiven = "required";
     }
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -125,6 +157,7 @@ export default function RSVPFlow() {
         fullName: form.fullName.trim(),
         clubName: form.clubName.trim(),
         designation: form.designation.trim(),
+        email: form.email.trim() || undefined,
         reference: data.reference,
       });
       setStep("confirmed");
@@ -376,6 +409,49 @@ export default function RSVPFlow() {
                 </Field>
               </motion.div>
 
+              {/* DPDP Consent Checkbox */}
+              <motion.div
+                initial={fadeUpInitial}
+                animate={fadeUpAnimate}
+                transition={fadeUpTransition}
+                className="pt-2 pb-4 flex flex-col space-y-1.5"
+              >
+                <label className="flex items-start gap-3 cursor-pointer group text-left select-none">
+                  <input
+                    type="checkbox"
+                    checked={form.consentGiven}
+                    onChange={(e) => setForm({ ...form, consentGiven: e.target.checked })}
+                    className="mt-1 accent-[#F5EFC8] w-4 h-4 cursor-pointer"
+                  />
+                  <span className="text-xs font-sans font-light text-[#A5BCD6]/80 leading-relaxed">
+                    I consent to the collection and processing of my name, club affiliation, and contact details for event check-in as outlined in the{" "}
+                    <a
+                      href="/privacy"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#F5EFC8] underline hover:text-[#f7f3da] font-normal cursor-pointer"
+                    >
+                      Privacy Notice
+                    </a>{" "}
+                    and{" "}
+                    <a
+                      href="/terms"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#F5EFC8] underline hover:text-[#f7f3da] font-normal cursor-pointer"
+                    >
+                      Terms of Attendance
+                    </a>{" "}
+                    under the DPDP Act.
+                  </span>
+                </label>
+                {errors.consentGiven && (
+                  <p className="text-[10px] text-[#4D0E12]/80 mt-1 font-sans tracking-wide">
+                    You must accept the privacy notice and terms to confirm your attendance.
+                  </p>
+                )}
+              </motion.div>
+
               {/* Submit */}
               <motion.div initial={fadeUpInitial} animate={fadeUpAnimate} transition={fadeUpTransition} className="pt-4 flex justify-center">
                 <motion.button
@@ -576,6 +652,43 @@ export default function RSVPFlow() {
                   </p>
                 </div>
               </motion.div>
+
+              {/* Third dashed separator */}
+              {qrCodeUrl && (
+                <>
+                  <div className="relative">
+                    <div className="border-t border-dashed border-[#F5EFC8]/15" />
+                    <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#231815] border border-[#F5EFC8]/10" />
+                    <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#231815] border border-[#F5EFC8]/10" />
+                  </div>
+
+                  {/* QR Code section */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 1.5, duration: 0.6 }}
+                    className="px-7 py-6 flex flex-col items-center justify-center space-y-4"
+                  >
+                    <div className="p-2 bg-white rounded-xl border border-[#F5EFC8]/25 shadow-lg max-w-[140px] w-full aspect-square flex items-center justify-center">
+                      <img src={qrCodeUrl} alt="QR Check-in" className="w-full h-full object-contain rounded-lg" />
+                    </div>
+                    <div className="text-center space-y-2">
+                      <p className="text-[11px] sm:text-xs font-sans text-[#F5EFC8] tracking-wide font-normal">
+                        Scan this QR code at the venue to check-in
+                      </p>
+                      <p className="text-[10px] font-sans text-[#A5BCD6]/60 leading-relaxed max-w-[320px] mx-auto">
+                        📸 Please <span className="text-[#F5EFC8] font-normal">take a screenshot</span> of this ticket for quick access.
+                        {confirmation.email && (
+                          <>
+                            <br />
+                            This QR code has also been sent to your email <span className="text-white/80 font-normal">{confirmation.email}</span>.
+                          </>
+                        )}
+                      </p>
+                    </div>
+                  </motion.div>
+                </>
+              )}
             </div>
 
             {/* Closing note */}
@@ -657,6 +770,8 @@ export default function RSVPFlow() {
         )}
 
       </AnimatePresence>
+
+
     </div>
   );
 }

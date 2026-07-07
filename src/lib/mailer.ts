@@ -1,5 +1,7 @@
 import nodemailer from "nodemailer";
 import QRCode from "qrcode";
+import fs from "fs";
+import path from "path";
 import { EVENT, PRIMARY_CLUB, EVENT_FLOW } from "@/lib/constants";
 
 // ─── Transporter (lazy singleton) ────────────────────────────────────────────
@@ -90,6 +92,9 @@ function buildConfirmationHtml(params: {
   <div class="wrapper">
 
     <div class="header">
+      <div style="text-align: center; margin-bottom: 16px;">
+        <img src="cid:ganesha-logo" width="60" style="object-fit: contain; opacity: 0.85;" alt="Ganesha Logo" />
+      </div>
       <p class="header-micro">${PRIMARY_CLUB} · ${EVENT.district}</p>
       <h1 class="header-title">${EVENT.title}</h1>
     </div>
@@ -121,7 +126,11 @@ function buildConfirmationHtml(params: {
           </div>
           <div>
             <p class="pass-cell-label">Venue</p>
-            <p class="pass-cell-value">${EVENT.venue}</p>
+            <p class="pass-cell-value">
+              <a href="https://maps.app.goo.gl/PtkxETtN3RPNUw4D6" target="_blank" style="color: #ffffff; text-decoration: underline; font-weight: 300;">
+                ${EVENT.venue}
+              </a>
+            </p>
           </div>
           <div>
             <p class="pass-cell-label">Status</p>
@@ -159,7 +168,9 @@ function buildConfirmationHtml(params: {
       <p class="footer-text">
         ${EVENT.fullTitle} · ${EVENT.edition}<br />
         ${EVENT.date} · ${EVENT.time}<br />
-        ${EVENT.venue}
+        <a href="https://maps.app.goo.gl/PtkxETtN3RPNUw4D6" target="_blank" style="color: rgba(165,188,214,0.4); text-decoration: underline;">
+          ${EVENT.venue}
+        </a>
       </p>
     </div>
 
@@ -207,6 +218,9 @@ function buildWelcomeEventHtml(params: { fullName: string }): string {
   <div class="wrapper">
 
     <div class="header">
+      <div style="text-align: center; margin-bottom: 16px;">
+        <img src="cid:ganesha-logo" width="60" style="object-fit: contain; opacity: 0.85;" alt="Ganesha Logo" />
+      </div>
       <p class="header-micro">Welcome to</p>
       <h1 class="header-title">${EVENT.title}</h1>
     </div>
@@ -244,7 +258,9 @@ function buildWelcomeEventHtml(params: { fullName: string }): string {
     <div class="footer">
       <p class="footer-text">
         ${PRIMARY_CLUB} · ${EVENT.district}<br />
-        ${EVENT.venue}
+        <a href="https://maps.app.goo.gl/PtkxETtN3RPNUw4D6" target="_blank" style="color: rgba(165,188,214,0.4); text-decoration: underline;">
+          ${EVENT.venue}
+        </a>
       </p>
     </div>
 
@@ -296,7 +312,7 @@ export async function sendConfirmationEmail(params: {
       `Event: ${EVENT.title}`,
       `Date: ${EVENT.date}`,
       `Time: ${EVENT.time}`,
-      `Venue: ${EVENT.venue}`,
+      `Venue: ${EVENT.venue} (Google Maps: https://maps.app.goo.gl/PtkxETtN3RPNUw4D6)`,
       `Reference: ${reference}`,
       "",
       `Please present this reference number or the QR code in your email upon arrival for check-in.`,
@@ -310,6 +326,15 @@ export async function sendConfirmationEmail(params: {
         filename: "qrcode.png",
         content: qrBuffer,
         cid: "rsvp-qrcode", // Matches <img src="cid:rsvp-qrcode" />
+      },
+      {
+        filename: "ganesha.png",
+        content: fs.readFileSync(path.join(process.cwd(), "public", "ganesha.png")),
+        cid: "ganesha-logo", // Matches <img src="cid:ganesha-logo" />
+      },
+      {
+        filename: "UGAMA_AARAMBHA_Invitation_Poster.jpg",
+        path: path.join(process.cwd(), "public", "poster.jpg"),
       },
     ],
   });
@@ -340,6 +365,8 @@ export async function sendWelcomeEventEmail(params: {
       "",
       `We are thrilled to welcome you to the ${EVENT.fullTitle}. Your check-in has been completed.`,
       "",
+      `Venue: ${EVENT.venue} (Google Maps: https://maps.app.goo.gl/PtkxETtN3RPNUw4D6)`,
+      "",
       `Event Schedule for this evening:`,
       ...EVENT_FLOW.map((item) => `  - ${item.time}: ${item.activity}`),
       "",
@@ -347,5 +374,12 @@ export async function sendWelcomeEventEmail(params: {
       "",
       `— ${PRIMARY_CLUB} · ${EVENT.district}`,
     ].join("\n"),
+    attachments: [
+      {
+        filename: "ganesha.png",
+        content: fs.readFileSync(path.join(process.cwd(), "public", "ganesha.png")),
+        cid: "ganesha-logo", // Matches <img src="cid:ganesha-logo" />
+      },
+    ],
   });
 }

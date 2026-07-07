@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { motion, Variants, useScroll, useSpring } from "framer-motion";
 import RSVPFlow from "@/components/RSVPFlow";
 import {
@@ -214,6 +215,21 @@ export default function InvitationHomepage({ scrollContainerRef }: InvitationHom
         <DecorativeElement type="sparkle" color="yellow" className="w-4 h-4 left-[5%] top-[-20px]" mouseOffset={mouseOffset} parallaxFactor={1.3} floatYRange={[0, -15, 0]} floatDuration={11} />
         <DecorativeElement type="circle" color="blue" className="w-5 h-5 right-[8%] top-[-10px]" mouseOffset={mouseOffset} parallaxFactor={0.8} floatYRange={[0, 12, 0]} floatDuration={14} floatDelay={1.5} />
 
+        {/* Small Ganesha Emblem */}
+        <div className="flex justify-center pb-2">
+          <motion.img
+            layoutId="ganesha-emblem-shared"
+            src="/ganesha.png"
+            alt="Ganesha Emblem"
+            className="w-[72px] h-auto object-contain drop-shadow-[0_0_15px_rgba(245,239,200,0.14)] opacity-[0.82]"
+            transition={{
+              type: "spring",
+              stiffness: 90,
+              damping: 20,
+            }}
+          />
+        </div>
+
         <h1 className="text-5xl sm:text-6xl md:text-7xl font-serif italic text-transparent-yellow drop-shadow-[0_0_25px_rgba(245,239,200,0.14)] font-normal tracking-wide">
           {EVENT.title}
         </h1>
@@ -272,7 +288,19 @@ export default function InvitationHomepage({ scrollContainerRef }: InvitationHom
                 </div>
                 <div className="space-y-1 w-full">
                   <h3 className="text-xs uppercase tracking-[0.2em] font-sans font-light text-[#A5BCD6]/70">{detail.label}</h3>
-                  <p className="text-base font-sans font-light text-[#F5EFC8]">{detail.value}</p>
+                  {detail.label === "Venue" ? (
+                    <a
+                      href="https://maps.app.goo.gl/PtkxETtN3RPNUw4D6"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-base font-sans font-light text-[#F5EFC8] hover:underline hover:text-[#fbf9eb] transition-colors duration-300 flex items-center gap-1 group/link"
+                    >
+                      <span>{detail.value}</span>
+                      <span className="text-[10px] text-[#A5BCD6]/50 group-hover/link:text-[#F5EFC8] transition-colors">↗</span>
+                    </a>
+                  ) : (
+                    <p className="text-base font-sans font-light text-[#F5EFC8]">{detail.value}</p>
+                  )}
                   <div className="w-8 h-[1px] bg-gradient-to-r from-[#F5EFC8]/35 via-[#F5EFC8]/10 to-transparent mt-2" />
                 </div>
               </motion.div>
@@ -462,12 +490,32 @@ export default function InvitationHomepage({ scrollContainerRef }: InvitationHom
       </div>
 
       {/* ── SECTION 5: RSVP Flow ── */}
-      <RSVPFlow />
+       <RSVPFlow />
 
       {/* Footer watermark */}
-      <div className="pt-16 pb-8 text-center">
+      <div className="pt-16 pb-8 text-center space-y-3">
         <p className="text-[10px] sm:text-xs font-sans tracking-[0.3em] uppercase text-[#A5BCD6]/35 font-light">
           {PRIMARY_CLUB} · {EVENT.district}
+        </p>
+        <p className="text-[9px] sm:text-[10px] font-sans tracking-[0.2em] uppercase text-[#A5BCD6]/25 font-light">
+          Website Developed by{" "}
+          <a
+            href="https://thescene.co.in"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#F5EFC8]/45 hover:text-[#F5EFC8] hover:underline transition-colors duration-300 font-normal"
+          >
+            The Scene Co.
+          </a>
+        </p>
+        <p className="text-[9px] sm:text-[10px] font-sans tracking-[0.2em] uppercase text-[#A5BCD6]/25 font-light">
+          <Link href="/privacy" className="hover:text-[#F5EFC8] hover:underline transition-colors duration-300">
+            Privacy Policy
+          </Link>
+          <span className="mx-2 text-[#A5BCD6]/15">·</span>
+          <Link href="/terms" className="hover:text-[#F5EFC8] hover:underline transition-colors duration-300">
+            Terms & Conditions
+          </Link>
         </p>
       </div>
     </motion.div>
