@@ -117,14 +117,13 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-
-  // 5. Fire-and-forget: Send confirmation email (only if email was provided)
+  // 5. Send confirmation email (only if email was provided)
   if (email) {
-    sendConfirmationEmail({ toEmail: email, fullName, clubName, designation, reference }).catch(
-      (err) => {
-        console.error("[RSVP] Email send error:", err?.message ?? err);
-      }
-    );
+    try {
+      await sendConfirmationEmail({ toEmail: email, fullName, clubName, designation, reference });
+    } catch (err: any) {
+      console.error("[RSVP] Email send error:", err?.message ?? err);
+    }
   }
 
   // 6. Return success

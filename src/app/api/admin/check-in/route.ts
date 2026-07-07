@@ -100,15 +100,16 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
-
-    // 7. Fire-and-forget: Send Welcome & Event Flow email (if email was provided)
+    // 7. Send Welcome & Event Flow email (if email was provided)
     if (guest.email) {
-      sendWelcomeEventEmail({
-        toEmail: guest.email,
-        fullName: guest.full_name,
-      }).catch((err) => {
+      try {
+        await sendWelcomeEventEmail({
+          toEmail: guest.email,
+          fullName: guest.full_name,
+        });
+      } catch (err: any) {
         console.error("[Check-in] Welcome email send error:", err?.message ?? err);
-      });
+      }
     }
 
     // 8. Return success response
