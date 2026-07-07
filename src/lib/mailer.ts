@@ -145,6 +145,11 @@ function buildConfirmationHtml(params: {
           <p style="font-size: 10px; color: rgba(165,188,214,0.5); margin: 12px 0 0; font-weight: 300; letter-spacing: 0.05em; line-height: 1.4;">
             Please present this QR code at the registration desk<br />upon arrival for automated check-in.
           </p>
+          <div style="margin-top: 20px;">
+            <a href="https://maps.app.goo.gl/PtkxETtN3RPNUw4D6" target="_blank" style="display: inline-block; padding: 12px 28px; background-color: #F5EFC8; color: #1a1210; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; text-decoration: none; text-transform: uppercase; letter-spacing: 0.15em; border-radius: 24px; box-shadow: 0 4px 12px rgba(245,239,200,0.15);">
+              📍 Open Venue Location
+            </a>
+          </div>
         </div>
 
         <div class="pass-ref">
@@ -245,6 +250,12 @@ function buildWelcomeEventHtml(params: { fullName: string }): string {
             ${scheduleRows}
           </tbody>
         </table>
+        
+        <div style="text-align: center; margin-top: 24px;">
+          <a href="https://maps.app.goo.gl/PtkxETtN3RPNUw4D6" target="_blank" style="display: inline-block; padding: 12px 28px; background-color: #F5EFC8; color: #1a1210; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; text-decoration: none; text-transform: uppercase; letter-spacing: 0.15em; border-radius: 24px; box-shadow: 0 4px 12px rgba(245,239,200,0.15);">
+            📍 Navigate to Venue
+          </a>
+        </div>
       </div>
 
       <div class="divider-line"></div>

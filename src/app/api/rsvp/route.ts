@@ -121,8 +121,9 @@ export async function POST(request: NextRequest) {
   if (email) {
     try {
       await sendConfirmationEmail({ toEmail: email, fullName, clubName, designation, reference });
-    } catch (err: any) {
-      console.error("[RSVP] Email send error:", err?.message ?? err);
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      console.error("[RSVP] Email send error:", errMsg);
     }
   }
 

@@ -100,6 +100,7 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
     // 7. Send Welcome & Event Flow email (if email was provided)
     if (guest.email) {
       try {
@@ -107,8 +108,9 @@ export async function POST(request: NextRequest) {
           toEmail: guest.email,
           fullName: guest.full_name,
         });
-      } catch (err: any) {
-        console.error("[Check-in] Welcome email send error:", err?.message ?? err);
+      } catch (err) {
+        const errMsg = err instanceof Error ? err.message : String(err);
+        console.error("[Check-in] Welcome email send error:", errMsg);
       }
     }
 
