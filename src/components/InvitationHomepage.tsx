@@ -222,15 +222,35 @@ export default function InvitationHomepage({ scrollContainerRef }: InvitationHom
             src="/ganesha.png"
             alt="Ganesha Emblem"
             className="w-[72px] h-auto object-contain drop-shadow-[0_0_15px_rgba(245,239,200,0.14)] opacity-[0.82]"
-            transition={{
-              type: "spring",
-              stiffness: 90,
-              damping: 20,
-            }}
           />
         </div>
 
-        <h1 className="text-5xl sm:text-6xl md:text-7xl font-serif italic text-transparent-yellow drop-shadow-[0_0_25px_rgba(245,239,200,0.14)] font-normal tracking-wide">
+        {/* Joint Club Logos */}
+        <div className="flex items-center justify-center gap-6 sm:gap-10 pt-4 pb-2">
+          {/* Swarna Bengaluru Logo */}
+          <div className="relative group">
+            <div className="absolute inset-0 bg-[#F5EFC8]/[0.02] blur-[8px] rounded-full group-hover:bg-[#F5EFC8]/[0.04] transition-all duration-500" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo-swarna.png"
+              alt="Rotaract Club of Swarna Bengaluru"
+              className="relative z-10 h-12 sm:h-16 w-auto object-contain drop-shadow-[0_0_10px_rgba(255,255,255,0.04)] transition-transform duration-500 group-hover:scale-105"
+            />
+          </div>
+          <div className="text-[#F5EFC8]/45 text-sm sm:text-base font-light italic font-serif relative z-10 select-none">&amp;</div>
+          {/* Nava Chaitanya Logo */}
+          <div className="relative group">
+            <div className="absolute inset-0 bg-[#F5EFC8]/[0.02] blur-[8px] rounded-full group-hover:bg-[#F5EFC8]/[0.04] transition-all duration-500" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo-nava.png"
+              alt="Rotaract Club of Bengaluru Nava Chaitanya"
+              className="relative z-10 h-12 sm:h-16 w-auto object-contain drop-shadow-[0_0_10px_rgba(255,255,255,0.04)] transition-transform duration-500 group-hover:scale-105"
+            />
+          </div>
+        </div>
+
+        <h1 className="text-5xl sm:text-6xl md:text-7xl font-serif italic text-transparent-yellow drop-shadow-[0_0_25px_rgba(245,239,200,0.14)] font-normal tracking-wide mt-2">
           {EVENT.title}
         </h1>
         <p className="text-xs sm:text-sm font-sans uppercase tracking-[0.22em] text-[#A5BCD6]/80 mt-4 max-w-[700px] mx-auto font-light leading-relaxed">
