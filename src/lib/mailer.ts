@@ -127,7 +127,7 @@ function buildConfirmationHtml(params: {
           <div>
             <p class="pass-cell-label">Venue</p>
             <p class="pass-cell-value">
-              <a href="https://maps.app.goo.gl/PtkxETtN3RPNUw4D6" target="_blank" style="color: #ffffff; text-decoration: underline; font-weight: 300;">
+              <a href="${EVENT.googleMapsUrl}" target="_blank" style="color: #ffffff; text-decoration: underline; font-weight: 300;">
                 ${EVENT.venue}
               </a>
             </p>
@@ -146,7 +146,7 @@ function buildConfirmationHtml(params: {
             Please present this QR code at the registration desk<br />upon arrival for automated check-in.
           </p>
           <div style="margin-top: 20px;">
-            <a href="https://maps.app.goo.gl/PtkxETtN3RPNUw4D6" target="_blank" style="display: inline-block; padding: 12px 28px; background-color: #F5EFC8; color: #1a1210; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; text-decoration: none; text-transform: uppercase; letter-spacing: 0.15em; border-radius: 24px; box-shadow: 0 4px 12px rgba(245,239,200,0.15);">
+            <a href="${EVENT.googleMapsUrl}" target="_blank" style="display: inline-block; padding: 12px 28px; background-color: #F5EFC8; color: #1a1210; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; text-decoration: none; text-transform: uppercase; letter-spacing: 0.15em; border-radius: 24px; box-shadow: 0 4px 12px rgba(245,239,200,0.15);">
               📍 Open Venue Location
             </a>
           </div>
@@ -173,7 +173,7 @@ function buildConfirmationHtml(params: {
       <p class="footer-text">
         ${EVENT.fullTitle} · ${EVENT.edition}<br />
         ${EVENT.date} · ${EVENT.time}<br />
-        <a href="https://maps.app.goo.gl/PtkxETtN3RPNUw4D6" target="_blank" style="color: rgba(165,188,214,0.4); text-decoration: underline;">
+        <a href="${EVENT.googleMapsUrl}" target="_blank" style="color: rgba(165,188,214,0.4); text-decoration: underline;">
           ${EVENT.venue}
         </a>
       </p>
@@ -252,7 +252,7 @@ function buildWelcomeEventHtml(params: { fullName: string }): string {
         </table>
         
         <div style="text-align: center; margin-top: 24px;">
-          <a href="https://maps.app.goo.gl/PtkxETtN3RPNUw4D6" target="_blank" style="display: inline-block; padding: 12px 28px; background-color: #F5EFC8; color: #1a1210; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; text-decoration: none; text-transform: uppercase; letter-spacing: 0.15em; border-radius: 24px; box-shadow: 0 4px 12px rgba(245,239,200,0.15);">
+          <a href="${EVENT.googleMapsUrl}" target="_blank" style="display: inline-block; padding: 12px 28px; background-color: #F5EFC8; color: #1a1210; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; text-decoration: none; text-transform: uppercase; letter-spacing: 0.15em; border-radius: 24px; box-shadow: 0 4px 12px rgba(245,239,200,0.15);">
             📍 Navigate to Venue
           </a>
         </div>
@@ -269,7 +269,7 @@ function buildWelcomeEventHtml(params: { fullName: string }): string {
     <div class="footer">
       <p class="footer-text">
         ${PRIMARY_CLUB} · ${EVENT.district}<br />
-        <a href="https://maps.app.goo.gl/PtkxETtN3RPNUw4D6" target="_blank" style="color: rgba(165,188,214,0.4); text-decoration: underline;">
+        <a href="${EVENT.googleMapsUrl}" target="_blank" style="color: rgba(165,188,214,0.4); text-decoration: underline;">
           ${EVENT.venue}
         </a>
       </p>
@@ -323,7 +323,7 @@ export async function sendConfirmationEmail(params: {
       `Event: ${EVENT.title}`,
       `Date: ${EVENT.date}`,
       `Time: ${EVENT.time}`,
-      `Venue: ${EVENT.venue} (Google Maps: https://maps.app.goo.gl/PtkxETtN3RPNUw4D6)`,
+      `Venue: ${EVENT.venue} (Google Maps: ${EVENT.googleMapsUrl})`,
       `Reference: ${reference}`,
       "",
       `Please present this reference number or the QR code in your email upon arrival for check-in.`,
@@ -376,7 +376,7 @@ export async function sendWelcomeEventEmail(params: {
       "",
       `We are thrilled to welcome you to the ${EVENT.fullTitle}. Your check-in has been completed.`,
       "",
-      `Venue: ${EVENT.venue} (Google Maps: https://maps.app.goo.gl/PtkxETtN3RPNUw4D6)`,
+      `Venue: ${EVENT.venue} (Google Maps: ${EVENT.googleMapsUrl})`,
       "",
       `Event Schedule for this evening:`,
       ...EVENT_FLOW.map((item) => `  - ${item.time}: ${item.activity}`),

@@ -310,7 +310,7 @@ export default function InvitationHomepage({ scrollContainerRef }: InvitationHom
                   <h3 className="text-xs uppercase tracking-[0.2em] font-sans font-light text-[#A5BCD6]/70">{detail.label}</h3>
                   {detail.label === "Venue" ? (
                     <a
-                      href="https://maps.app.goo.gl/PtkxETtN3RPNUw4D6"
+                      href={EVENT.googleMapsUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-base font-sans font-light text-[#F5EFC8] hover:underline hover:text-[#fbf9eb] transition-colors duration-300 flex items-center gap-1 group/link"
