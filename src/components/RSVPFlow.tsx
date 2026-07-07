@@ -670,6 +670,7 @@ export default function RSVPFlow() {
                     className="px-7 py-6 flex flex-col items-center justify-center space-y-4"
                   >
                     <div className="p-2 bg-white rounded-xl border border-[#F5EFC8]/25 shadow-lg max-w-[140px] w-full aspect-square flex items-center justify-center">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={qrCodeUrl} alt="QR Check-in" className="w-full h-full object-contain rounded-lg" />
                     </div>
                     <div className="text-center space-y-2">

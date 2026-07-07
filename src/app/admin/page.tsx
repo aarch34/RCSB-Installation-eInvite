@@ -156,10 +156,10 @@ function ScannerModal({ onClose, onCheckIn, onRefreshData }: ScannerModalProps) 
   const [cameraError, setCameraError] = useState("");
   const qrRef = useRef<Html5Qrcode | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
-
   const playBeep = (freq = 880, duration = 0.15) => {
     try {
       if (!audioContextRef.current) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
       }
       const ctx = audioContextRef.current;
@@ -499,14 +499,11 @@ interface DashboardProps {
   onRetry: () => void;
   onCheckIn: (ref: string) => Promise<ScanResult>;
 }
-
 function Dashboard({ rsvps, onRetry, onCheckIn }: DashboardProps) {
-  const { user } = useUser();
   const [search, setSearch] = useState("");
   const [downloading, setDownloading] = useState(false);
   const [scannerOpen, setScannerOpen] = useState(false);
 
-  const confirmed = rsvps.filter((r) => r.status === "confirmed").length;
   const checkedIn = rsvps.filter((r) => r.checked_in_at).length;
   const withEmail = rsvps.filter((r) => r.email).length;
   const uniqueClubs = new Set(rsvps.map((r) => r.club_name)).size;

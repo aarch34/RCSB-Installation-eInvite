@@ -14,6 +14,7 @@ export default function PrivacyPolicy() {
         {/* Header */}
         <div className="text-center space-y-4">
           <Link href="/" className="inline-flex items-center justify-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/ganesha.png"
               alt="Ganesha Emblem"
