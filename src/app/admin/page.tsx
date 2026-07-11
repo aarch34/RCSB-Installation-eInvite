@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useUser, UserButton, SignOutButton } from "@clerk/nextjs";
 import { Html5Qrcode } from "html5-qrcode";
 import Link from "next/link";
-import { Trophy } from "lucide-react";
+import { Trophy, Printer } from "lucide-react";
 import { EVENT, PRIMARY_CLUB } from "@/lib/constants";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -574,6 +574,19 @@ function Dashboard({ rsvps, onRetry, onCheckIn }: DashboardProps) {
                 <Trophy className="w-3.5 h-3.5 text-[#F5EFC8]" />
                 <span className="hidden sm:inline">Presentation Board</span>
                 <span className="inline sm:hidden">Board</span>
+              </motion.button>
+            </Link>
+
+            {/* Game Poster Link */}
+            <Link href="/service-quest/poster">
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-full border border-[#F5EFC8]/25 bg-[#F5EFC8]/[0.03] text-[#F5EFC8] text-[10px] uppercase tracking-widest font-medium transition-all hover:bg-[#F5EFC8]/[0.1] hover:border-[#F5EFC8]/50 cursor-pointer"
+              >
+                <Printer className="w-3.5 h-3.5 text-[#F5EFC8]" />
+                <span className="hidden sm:inline">Game Poster</span>
+                <span className="inline sm:hidden">Poster</span>
               </motion.button>
             </Link>
 
