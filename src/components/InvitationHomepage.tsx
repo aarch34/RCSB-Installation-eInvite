@@ -476,7 +476,7 @@ export default function InvitationHomepage({ scrollContainerRef }: InvitationHom
           <motion.div onViewportEnter={() => setSectionActive("rsvp")} viewport={{ once: true, amount: 0.15 }} className="absolute top-0" />
 
           <h2 className="text-xl sm:text-2xl font-light font-sans tracking-widest text-[#A5BCD6]/90 border-b border-[#F5EFC8]/10 pb-3 uppercase flex items-center justify-between">
-            <span>RSVP</span>
+            <span>RSVP {EVENT.isClosed && <span className="text-xs font-light text-[#F5EFC8]/60 ml-2 tracking-normal font-sans">(CLOSED)</span>}</span>
             <span className="w-10 h-[1px] bg-[#F5EFC8]/10" />
           </h2>
 

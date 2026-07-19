@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import QRCode from "qrcode";
 import { EVENT, RSVP_CONTACTS } from "@/lib/constants";
@@ -8,7 +9,7 @@ import { LiquidMetalButton } from "@/components/ui/liquid-metal-button";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type RsvpStep = "idle" | "welcome" | "form" | "submitting" | "confirmed" | "declined" | "error";
+type RsvpStep = "closed" | "idle" | "welcome" | "form" | "submitting" | "confirmed" | "declined" | "error";
 
 interface FormData {
   fullName: string;
@@ -54,7 +55,7 @@ const inputClass =
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function RSVPFlow() {
-  const [step, setStep] = useState<RsvpStep>("idle");
+  const [step, setStep] = useState<RsvpStep>(EVENT.isClosed ? "closed" : "idle");
   const [othersFading, setOthersFading] = useState(false);
   const [form, setForm] = useState<FormData>({
     fullName: "",
@@ -214,6 +215,68 @@ export default function RSVPFlow() {
       ))}
 
       <AnimatePresence mode="wait">
+
+        {/* ── CLOSED: Event Concluded card ── */}
+        {(step === "closed" || EVENT.isClosed) && (
+          <motion.div
+            key="closed"
+            initial={{ opacity: 0, y: 25, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+            className="relative z-10 w-full max-w-[560px] px-4"
+          >
+            <div className="relative rounded-2xl border border-[#F5EFC8]/20 bg-[#231815]/60 backdrop-blur-lg p-8 sm:p-10 text-center space-y-6 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.05)] overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#F5EFC8]/60 to-transparent" />
+
+              <div className="w-14 h-14 mx-auto rounded-full border border-[#F5EFC8]/30 bg-[#F5EFC8]/10 flex items-center justify-center shadow-[inset_0_0_15px_rgba(245,239,200,0.15)]">
+                <span className="text-2xl filter drop-shadow-[0_0_8px_rgba(245,239,200,0.4)] select-none">✨</span>
+              </div>
+
+              <div className="space-y-3">
+                <p className="text-[11px] uppercase tracking-[0.3em] font-sans font-light text-[#F5EFC8]/80">
+                  Event Concluded
+                </p>
+                <h3 className="text-3xl sm:text-4xl font-serif italic text-transparent-yellow font-normal leading-tight">
+                  RSVPs Are Now Closed
+                </h3>
+                <div className="w-16 h-[1px] bg-gradient-to-r from-transparent via-[#F5EFC8]/40 to-transparent mx-auto pt-1" />
+              </div>
+
+              <p className="text-sm sm:text-base font-sans font-light leading-relaxed text-[#A5BCD6]/90 max-w-[440px] mx-auto">
+                Thank you for your overwhelming response! <br />
+                <span className="text-white/80 font-normal">UGAMA AARAMBHA 2K26</span> has successfully concluded. We sincerely appreciate your support.
+              </p>
+
+              <div className="pt-4 space-y-4">
+                <p className="text-xs uppercase tracking-[0.2em] font-sans text-[#A5BCD6]/60 font-light">
+                  Explore event resources & our official website
+                </p>
+
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
+                  <a
+                    href={EVENT.mainWebsiteUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full border border-[#F5EFC8]/60 bg-[#F5EFC8] hover:bg-[#faf6db] text-[#231815] font-sans text-xs uppercase tracking-[0.16em] font-semibold shadow-lg shadow-[0_0_20px_rgba(245,239,200,0.2)] transition-all duration-300 hover:scale-105"
+                  >
+                    <span>Visit rotaractswarnabengaluru.in</span>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                  </a>
+
+                  <Link
+                    href="/plants"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full border border-[#F5EFC8]/35 bg-[#F5EFC8]/[0.08] hover:bg-[#F5EFC8]/[0.18] text-[#F5EFC8] font-sans text-xs uppercase tracking-[0.16em] font-medium transition-all duration-300 hover:scale-105 shadow-[0_0_15px_rgba(245,239,200,0.08)]"
+                  >
+                    <span>🌱 Plant Care & Info</span>
+                  </Link>
+                </div>
+              </div>
+
+            </div>
+          </motion.div>
+        )}
 
         {/* ── IDLE: Heading + Buttons ── */}
         {step === "idle" && (

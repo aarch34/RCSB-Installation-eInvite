@@ -20,6 +20,8 @@ export const EVENT = {
   googleMapsUrl: "https://www.google.com/maps/dir//Rotary+Club+of+Bangalore,+Rotary+House+of+Friendship,+20,+Lavelle+Road,+Shanthala+Nagar,+Ashok+Nagar,+Bengaluru,+Karnataka+560001/@13.0690332,77.5963265,15z/data=!4m8!4m7!1m0!1m5!1m1!1s0x3bae16a6376ec16f:0xaac96b4924304d4f!2m2!1d77.5993303!2d12.9743853?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D",
   dressCode: "Ethnic",
   district: "District 3192",
+  isClosed: true,
+  mainWebsiteUrl: "https://rotaractswarnabengaluru.in",
 } as const;
 
 // ─── Host Clubs ───────────────────────────────────────────────────────────────

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { sendConfirmationEmail } from "@/lib/mailer";
+import { EVENT } from "@/lib/constants";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -69,6 +70,17 @@ function validate(body: unknown): { valid: true; data: RsvpBody } | { valid: fal
 // ─── POST /api/rsvp ───────────────────────────────────────────────────────────
 
 export async function POST(request: NextRequest) {
+  // Check if RSVPs are closed
+  if (EVENT.isClosed) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: "RSVPs for UGAMA AARAMBHA 2K26 are now closed as the event has concluded. Please visit our main website.",
+      },
+      { status: 403 }
+    );
+  }
+
   // 1. Parse body
   let rawBody: unknown;
   try {
